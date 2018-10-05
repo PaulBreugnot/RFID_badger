@@ -1,6 +1,6 @@
 // Main program running on the ESP.
 #include "badger.h"
-#include "eeprom_manager.h"
+#include "flash_manager.h"
 #include "lcd_display.h"
 #include "leds.h"
 
