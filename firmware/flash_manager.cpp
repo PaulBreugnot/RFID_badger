@@ -1,11 +1,10 @@
 #include "flash_manager.h"
 #include "nvs_flash.h"
 #include "nvs.h"
-#include "errors.h"
 
 nvs_handle my_handle;
 
-err_t init_nvs() {
+esp_err_t init_nvs() {
   /*
    * Need to be called at initialization to use the nvs (Non-Volatile Storage).
    */
@@ -13,42 +12,28 @@ err_t init_nvs() {
   esp_err_t err = nvs_flash_init();
   if (err != ESP_OK) {
     // flash problem
-    return INIT_ERROR;
+    return err;
   }
   else {
-
     // Open nvs
-    err = nvs_open("key_storage", NVS_READWRITE, &my_handle);
-    if (err != ESP_OK) {
-      // open problem
-      return INIT_ERROR;
-    }
-    return OK;
+    return nvs_open("key_storage", NVS_READWRITE, &my_handle);
   }
 }
 
-err_t write_tag(const char *rfid_tag, const char *value) {
+esp_err_t write_tag(const char *rfid_tag, const char *value) {
   /*
    * Write an rfid tag to the nvs.
    * The associated value can be a user name, a badge function...
    */
   esp_err_t err = nvs_set_str(my_handle, rfid_tag, value);
+  // Commit tag
   if (err != ESP_OK) {
-    return WRITE_TAG_ERROR;
+    return err;
   }
-  else {
-    // Commit tag
-    err = nvs_commit(my_handle);
-    if (err != OK) {
-      return COMMIT_TAG_ERROR;
-    }
-    else {
-      return OK;
-    }
-  }
+  return nvs_commit(my_handle);
 }
 
-check_tag_result check_tag(const char *rfid_tag, const char *output_value) {
+check_tag_result check_tag(const char *rfid_tag, char *output_value) {
   /*
    * Check if rfid_tag is a valid tag.
    * If its a valid tag, result is stored in output_value.
@@ -63,9 +48,10 @@ check_tag_result check_tag(const char *rfid_tag, const char *output_value) {
   if (err == ESP_ERR_NVS_NOT_FOUND) {
     return INVALID_TAG;
   }
-  else if (err == OK) {
+  else if (err == ESP_OK) {
     // The tag is valid, and the associated value is stored in output_value
     if (output_value != NULL) {
+      output_value = (char*) malloc(value_length);
       nvs_get_str(my_handle, rfid_tag, output_value, &value_length);
     }
     return VALID_TAG;
@@ -73,6 +59,28 @@ check_tag_result check_tag(const char *rfid_tag, const char *output_value) {
   else {
     return READ_ERROR;
   }
+}
+
+esp_err_t delete_tag(const char *rfid_tag) {
+  /*
+   * Remove a tag from the nvs, so the tag become invalid.
+   */
+  esp_err_t err = nvs_erase_key(my_handle, rfid_tag);
+  if (err != ESP_OK) {
+    return err;
+  }
+  return nvs_commit(my_handle);
+}
+
+esp_err_t delete_all_tags() {
+  /*
+   * Remove all tags.
+   */
+  esp_err_t err = nvs_erase_all(my_handle);
+  if (err != ESP_OK) {
+    return err;
+  }
+  return nvs_commit(my_handle);
 }
 
 
