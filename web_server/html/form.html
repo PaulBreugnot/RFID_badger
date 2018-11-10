@@ -1,0 +1,30 @@
+<form id="add_user_form">
+    <table id='add_user_table'>
+        <tr>
+            <td>RFID</td>
+            <td></td>
+            <td>Nom :</td>
+            <td>Description :</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>
+                <input type="text" name="rfid">
+            </td>
+            <td>
+                <form id="rfid_tag_form" action="scan_rfid" method="get">
+                    <input type="submit" value="Scanner le rfid!">
+                </form>
+            </td>
+            <td>
+                <input type="text" name="name">
+            </td>
+            <td>
+                <input type="text" name="description">
+            </td>
+            <td>
+                <input type="submit" value="Valider">
+            </td>
+        </tr>
+    </table>
+</form>

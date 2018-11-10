@@ -14,6 +14,7 @@ function ajaxGet(url, callback) {
     });
     req.send(null);
 }
+
 function ajaxPost(url, data, callback, isJson) {
     var req = new XMLHttpRequest();
     req.open("POST", url);
@@ -58,10 +59,10 @@ function creerLien(e) {
     titreElt.href = e.url;
     titreElt.style.color = "#428bca";
     titreElt.style.fontSize = "20px";
-    titreElt.style.textDecoration = "none"; 
+    titreElt.style.textDecoration = "none";
 
 
-    
+
     liensElt.appendChild(bElt);
     liensElt.appendChild(urlElt);
     liensElt.appendChild(auteurElt);
@@ -73,28 +74,28 @@ function creerLien(e) {
 ajaxGet("https://oc-jswebsrv.herokuapp.com/api/liens", function (reponse) {
     var jsonData = JSON.parse(reponse);
     jsonData.forEach(function (lien) {
-    creerLien(lien);
-});
+        creerLien(lien);
+    });
 });
 
 var creationFormulaires = [
-{
-    placeholder: "Entrez votre nom",
-    id: "nom",
-    type: "text",
-    largeur: "200px"
+    {
+        placeholder: "Entrez votre nom",
+        id: "nom",
+        type: "text",
+        largeur: "200px"
 },
-{
-    placeholder: "Entrez le titre",
-    id: "titre",
-    type: "text",
-    largeur: "250px"
+    {
+        placeholder: "Entrez le titre",
+        id: "titre",
+        type: "text",
+        largeur: "250px"
 },
-{
-    placeholder: "Entrez l'URL du lien",
-    id: "url",
-    type: "text",
-    largeur: "300px"
+    {
+        placeholder: "Entrez l'URL du lien",
+        id: "url",
+        type: "text",
+        largeur: "300px"
 }];
 
 var bouton = document.getElementById("boutonajouter");
@@ -117,16 +118,16 @@ creationFormulaires.forEach(function (e) {
     inputElt.style.marginRight = "20px";
     inputElt.style.marginBottom = "10px";
     inputElt.style.width = e.largeur;
-    
+
     spanElt.appendChild(inputElt);
     formulaire.appendChild(spanElt);
 });
 
-bouton.addEventListener("click", function() {
+bouton.addEventListener("click", function () {
     bouton.remove();
     formulaire.appendChild(boutonAjouter);
     formulaireDiv.appendChild(formulaire);
-    
+
 });
 
 formulaire.addEventListener("submit", function (e) {
@@ -138,77 +139,77 @@ formulaire.addEventListener("submit", function (e) {
     if ((!regexHttp.test(formulaire.elements.url.value)) && ((!regexHttps.test(formulaire.elements.url.value)))) {
         formulaire.elements.url.value = "http://" + formulaire.elements.url.value;
     }
-    
+
     var infosForm = {
-    titre: formulaire.elements.titre.value,
-    url: formulaire.elements.url.value,
-    auteur: formulaire.elements.nom.value
+        titre: formulaire.elements.titre.value,
+        url: formulaire.elements.url.value,
+        auteur: formulaire.elements.nom.value
     };
 
     formulaire.remove();
 
-    ajaxPost("https://oc-jswebsrv.herokuapp.com/api/lien", infosForm, function() {
+    ajaxPost("https://oc-jswebsrv.herokuapp.com/api/lien", infosForm, function () {
         ajaxGet("https://oc-jswebsrv.herokuapp.com/api/liens", function (reponse) {
-    // Transforme la réponse en tableau d'objets JavaScript
-    var jsonData = JSON.parse(reponse);
- 
-    var newLienElt = document.createElement("div");
-    newLienElt.classList.add("lien");
-    var brElt = document.createElement("br");
-    var bElt = document.createElement("b");
+            // Transforme la réponse en tableau d'objets JavaScript
+            var jsonData = JSON.parse(reponse);
 
-    var auteurElt = document.createElement("span");
-    auteurElt.textContent = "Ajouté par " + jsonData[0].auteur;
+            var newLienElt = document.createElement("div");
+            newLienElt.classList.add("lien");
+            var brElt = document.createElement("br");
+            var bElt = document.createElement("b");
 
-    var urlElt = document.createElement("span");
-    urlElt.textContent = jsonData[0].url;
-    urlElt.style.marginLeft = "8px";
+            var auteurElt = document.createElement("span");
+            auteurElt.textContent = "Ajouté par " + jsonData[0].auteur;
 
-    var titreElt = document.createElement("a");
-    titreElt.textContent = jsonData[0].titre;
-    titreElt.href = jsonData[0].url;
-    titreElt.style.color = "#428bca";
-    titreElt.style.fontSize = "20px";
-    titreElt.style.textDecoration = "none"; 
+            var urlElt = document.createElement("span");
+            urlElt.textContent = jsonData[0].url;
+            urlElt.style.marginLeft = "8px";
 
-    var confirmationElt = document.createElement("div");
-        confirmationElt.textContent = 'Le lien "' + formulaire.elements.titre.value + '" a bien été ajouté.';
-        confirmationElt.style.height = "60px";
-        confirmationElt.style.width = "98%";
-        confirmationElt.style.backgroundColor = "#ccf2ff";
-        confirmationElt.style.color = "#428bca";
-        confirmationElt.style.fontWeight = "bold";
-        confirmationElt.style.paddingLeft = "20px";
-        confirmationElt.style.paddingTop = "30px";
-        confirmationElt.style.marginBottom = "10px";
-        confirmationElt.style.fontSize = "25px";
-        document.querySelector("h1").insertAdjacentElement("afterend", confirmationElt);
+            var titreElt = document.createElement("a");
+            titreElt.textContent = jsonData[0].titre;
+            titreElt.href = jsonData[0].url;
+            titreElt.style.color = "#428bca";
+            titreElt.style.fontSize = "20px";
+            titreElt.style.textDecoration = "none";
 
-        // Il sera effacé après 2 secondes
+            var confirmationElt = document.createElement("div");
+            confirmationElt.textContent = 'Le lien "' + formulaire.elements.titre.value + '" a bien été ajouté.';
+            confirmationElt.style.height = "60px";
+            confirmationElt.style.width = "98%";
+            confirmationElt.style.backgroundColor = "#ccf2ff";
+            confirmationElt.style.color = "#428bca";
+            confirmationElt.style.fontWeight = "bold";
+            confirmationElt.style.paddingLeft = "20px";
+            confirmationElt.style.paddingTop = "30px";
+            confirmationElt.style.marginBottom = "10px";
+            confirmationElt.style.fontSize = "25px";
+            document.querySelector("h1").insertAdjacentElement("afterend", confirmationElt);
 
-        setTimeout(function() { 
-            confirmationElt.remove();
+            // Il sera effacé après 2 secondes
+
+            setTimeout(function () {
+                confirmationElt.remove();
             }, 2000);
 
-    newLienElt.appendChild(bElt);
-    newLienElt.appendChild(urlElt);
-    newLienElt.appendChild(auteurElt);
-    urlElt.appendChild(brElt);
-    bElt.appendChild(titreElt);
-    document.getElementById("contenu").insertAdjacentElement('afterbegin', newLienElt);
+            newLienElt.appendChild(bElt);
+            newLienElt.appendChild(urlElt);
+            newLienElt.appendChild(auteurElt);
+            urlElt.appendChild(brElt);
+            bElt.appendChild(titreElt);
+            document.getElementById("contenu").insertAdjacentElement('afterbegin', newLienElt);
 
-    var newBouton = document.createElement("button");
-    newBouton.id = "boutonajouter";
-    newBouton.textContent = "Ajouter un lien";
+            var newBouton = document.createElement("button");
+            newBouton.id = "boutonajouter";
+            newBouton.textContent = "Ajouter un lien";
 
-    document.getElementById("contenu").insertAdjacentElement("afterbegin", newBouton);
+            document.getElementById("contenu").insertAdjacentElement("afterbegin", newBouton);
 
-    newBouton.addEventListener("click", function () {
-    newBouton.remove();
-    formulaire.reset();
-    formulaireDiv.appendChild(formulaire);
-    });   
-});
+            newBouton.addEventListener("click", function () {
+                newBouton.remove();
+                formulaire.reset();
+                formulaireDiv.appendChild(formulaire);
+            });
+        });
     }, true);
 });
-    // Merci !
+// Merci !
