@@ -75,6 +75,8 @@ const divAddUserForm = document.getElementById("user_buttons");
 
 const add_button = document.getElementById("add_button");
 
+const userTable = document.getElementById('user_table');
+
 var indexLine = 0;
 
 function addHTMLForm(index = -1) {
@@ -93,29 +95,41 @@ function formResponse(index) {
     const addUserForm = document.getElementById("add_user_form");
     if (addUserForm) {
 
-        const formScanRFID = document.getElementById("rfid_tag_form");
+        function getFormScanRFID() {
+            const formScanRFID = document.getElementById("rfid_tag_form");
+            const rfidID = document.getElementById("rfidID");
+            if (formScanRFID && rfidID) {
 
-        const rfidID = document.getElementById("rfidID");
+                formScanRFID.addEventListener("submit", function (e) {
+                    e.preventDefault();
 
-        formScanRFID.addEventListener("submit", function (e) {
-            e.preventDefault();
+                    ajaxPost("https://oc-jswebsrv.herokuapp.com/api/lien", "Request ID", function () {
+                        ajaxGet("https://oc-jswebsrv.herokuapp.com/api/liens", function (reponse) {
+                            var jsonData = JSON.parse(reponse);
+                            rfidID.value = jsonData[0].rfid;
+                        });
+                    }, true);
 
-            ajaxPost("https://oc-jswebsrv.herokuapp.com/api/lien", "Request ID", function () {
-                ajaxGet("https://oc-jswebsrv.herokuapp.com/api/liens", function (reponse) {
-                    var jsonData = JSON.parse(reponse);
-                    rfidID.value = jsonData[0].rfid;
                 });
-            }, true);
 
-        });
+            } else {
+                window.setTimeout(getFormScanRFID, 100);
+            }
+        }
+        getFormScanRFID();
+
 
         addUserForm.addEventListener("submit", function (e) {
             e.preventDefault();
+            
+            var rfid = addUserForm.elements.rfid.value;
+            var name = addUserForm.elements.name.value;
+            var description = addUserForm.elements.description.value;
 
             const infosForm = {
-                rfid: addUserForm.elements.rfid.value,
-                name: addUserForm.elements.name.value,
-                description: addUserForm.elements.description.value
+                rfid: rfid,
+                name: name,
+                description: description
             };
 
             console.log(infosForm);
@@ -128,6 +142,7 @@ function formResponse(index) {
 
                     if (index == -1) {
 
+                        //Create DOM elements
                         const line = document.createElement('tr');
 
                         const name = document.createElement('td');
@@ -151,9 +166,17 @@ function formResponse(index) {
                             }
                             addHTMLForm(indexLine);
                         };
-                        
+
+                        //Add DOM elements                        
+                        modify.appendChild(modifyButton);
+                        line.appendChild(name);
+                        line.appendChild(rfid);
+                        line.appendChild(description);
+                        line.appendChild(modify);
+                        userTable.appendChild(line);
+
                         indexLine += 1;
-                        
+
                     } else {
                         const name = document.getElementById("name_" + index);
                         name.innerHTML = jsonData[0].name;
@@ -162,7 +185,7 @@ function formResponse(index) {
                         rfid.innerHTML = jsonData[0].rfid;
 
                         const description = document.getElementById("description_" + index);
-                        description.innerHTML = jsonData[0].description;                        
+                        description.innerHTML = jsonData[0].description;
                     }
                 });
             }, true);
