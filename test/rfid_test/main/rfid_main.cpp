@@ -6,8 +6,8 @@
 #include "esp_log.h"
 #include "MFRC522.h"
 
-#define SCK_pin 21
-#define RST_pin 32
+#define SDA_pin 32
+#define RST_pin 33
 
 extern "C" {
    void app_main();
@@ -17,7 +17,7 @@ void app_main()
 {
     MFRC522 mfrc522_module = MFRC522();
     ESP_LOGI("MFRC522", "init module...");
-    mfrc522_module.PCD_Init(SCK_pin, RST_pin);
+    mfrc522_module.PCD_Init(SDA_pin, RST_pin);
 
     mfrc522_module.PCD_DumpVersionToSerial();
 
