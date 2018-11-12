@@ -1,0 +1,21 @@
+body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background-color: #eee;
+    margin-left: 30px;
+    margin-right: 30px;
+}
+
+span {
+    font-weight: normal;
+    font-size: 80%;
+}
+
+.lien {
+    background: white;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+button
+{
+	margin-bottom: 10px;
+}

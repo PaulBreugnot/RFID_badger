@@ -1,6 +1,7 @@
 body
 {
 	background-color: LightSkyBlue;
+    align-content: center;
 }
 
 h1
@@ -17,6 +18,7 @@ h2
 	margin: auto;
 	margin-top: 20px;
 	margin-bottom: 20px;
+    text-align: center;
 }
 
 button
