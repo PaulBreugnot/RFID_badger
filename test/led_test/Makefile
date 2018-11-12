@@ -3,7 +3,6 @@
 # project subdirectory.
 #
 
-PROJECT_NAME := gpio
+PROJECT_NAME := led_test
 
 include $(IDF_PATH)/make/project.mk
-
