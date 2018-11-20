@@ -1,0 +1,6 @@
+[submodule "test/display_test/components/u8g2"]
+	path = test/display_test/components/u8g2
+	url = https://github.com/olikraus/u8g2
+[submodule "firmware/components/u8g2"]
+	path = firmware/components/u8g2
+	url = https://github.com/olikraus/u8g2

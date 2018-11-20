@@ -1,4 +1,5 @@
 test/rfid_test/build
 test/led_test/build
 test/nvs_test/build
+test/display_test/build
 firmware/build
