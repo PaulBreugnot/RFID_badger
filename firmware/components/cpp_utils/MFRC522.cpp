@@ -201,7 +201,7 @@ MFRC522::StatusCode MFRC522::PCD_CalculateCRC(byte* data, byte length, byte* res
  * Initializes the MFRC522 chip.
  */
 void MFRC522::PCD_Init() {
-	//m_spi.setHost(VSPI_HOST);
+	m_spi.setHost(VSPI_HOST);
 	m_spi.init();
 
 	ESP32CPP::GPIO::setOutput((gpio_num_t)_chipSelectPin);
