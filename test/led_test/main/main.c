@@ -16,7 +16,7 @@
 
 /**
  * GPIO status:
- * GPIO18: green led
+ * GPIO16: green led
  * GPIO5: yellow led
  * GPIO17:  red led
  *
@@ -27,7 +27,7 @@
  *
  */
 
-#define GPIO_OUTPUT_IO_0    18
+#define GPIO_OUTPUT_IO_0    16
 #define GPIO_OUTPUT_IO_1    5
 #define GPIO_OUTPUT_IO_2    17
 #define GPIO_OUTPUT_PIN_SEL  ((1ULL<<GPIO_OUTPUT_IO_0) | (1ULL<<GPIO_OUTPUT_IO_1) | (1ULL<<GPIO_OUTPUT_IO_2))
