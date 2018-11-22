@@ -15,7 +15,7 @@
 
 static const char *TAG = "ssd1306";
 
-void init_display() {
+u8g2_t init_display() {
 	u8g2_esp32_hal_t u8g2_esp32_hal = U8G2_ESP32_HAL_DEFAULT;
 	u8g2_esp32_hal.sda   = PIN_SDA;
 	u8g2_esp32_hal.scl  = PIN_SCL;
@@ -38,16 +38,42 @@ void init_display() {
 	u8g2_SetPowerSave(&u8g2, 0); // wake up display
 	ESP_LOGI(TAG, "u8g2_ClearBuffer");
 	u8g2_ClearBuffer(&u8g2);
-	ESP_LOGI(TAG, "u8g2_DrawBox");
-	u8g2_DrawBox(&u8g2, 0, 26, 80,6);
-	u8g2_DrawFrame(&u8g2, 0,26,100,6);
 
-	ESP_LOGI(TAG, "u8g2_SetFont");
-    u8g2_SetFont(&u8g2, u8g2_font_ncenB14_tr);
-	ESP_LOGI(TAG, "u8g2_DrawStr");
-    u8g2_DrawStr(&u8g2, 2,17,"Hi nkolban!");
-	ESP_LOGI(TAG, "u8g2_SendBuffer");
-	u8g2_SendBuffer(&u8g2);
+	init_header(u8g2);
+
 
 	ESP_LOGI(TAG, "All done!");
+	return u8g2;
+}
+
+void init_header(u8g2_t u8g2){
+	u8g2_SetFont(&u8g2, u8g2_font_crox2cb_tf);
+	u8g2_DrawStr(&u8g2, 2,15,"Min'Bot Inc.");
+	u8g2_DrawHLine(&u8g2, 0, 16, 128);
+	u8g2_SendBuffer(&u8g2);
+}
+
+void task_show_present_badge(void* u8g2_ptr) {
+
+	u8g2_t* u8g2 = (u8g2_t*) u8g2_ptr;
+
+  u8g2_SetFont(u8g2, u8g2_font_mercutio_basic_nbp_t_all);
+  u8g2_DrawUTF8(u8g2, 13,30,"Présenter un badge");
+	int arrow_positions[] = {0, 2, 4, 6, 4, 2};
+	int i = 0;
+	// u8g2_ClearBuffer(u8g2);
+	for (;;) {
+	// u8g2_ClearBuffer(u8g2);
+	u8g2_SetDrawColor(u8g2, 0);
+	u8g2_DrawBox(u8g2, 55, 32, 18, 63);
+	u8g2_SetDrawColor(u8g2, 1);
+	u8g2_DrawBox(u8g2, 60, 32 + arrow_positions[i], 8, 15);
+	u8g2_DrawTriangle(u8g2, 55, 47 + arrow_positions[i], 73, 47 + arrow_positions[i], 64, 57 + arrow_positions[i]);
+	u8g2_SendBuffer(u8g2);
+	vTaskDelay(10 / portTICK_RATE_MS);
+	i++;
+	if (i > 5) {
+		i = 0;
+	}
+};
 }

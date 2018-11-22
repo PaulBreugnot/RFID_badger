@@ -99,7 +99,7 @@ uint8_t u8g2_esp32_spi_byte_cb(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, void 
  * to handle I2C communications.
  */
 uint8_t u8g2_esp32_i2c_byte_cb(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, void *arg_ptr) {
-	ESP_LOGI(TAG, "i2c_cb: Received a msg: %d, arg_int: %d, arg_ptr: %p", msg, arg_int, arg_ptr);
+	ESP_LOGD(TAG, "i2c_cb: Received a msg: %d, arg_int: %d, arg_ptr: %p", msg, arg_int, arg_ptr);
 
 	switch(msg) {
 		case U8X8_MSG_BYTE_SET_DC: {
@@ -154,11 +154,8 @@ uint8_t u8g2_esp32_i2c_byte_cb(u8x8_t *u8x8, uint8_t msg, uint8_t arg_int, void 
 		}
 
 		case U8X8_MSG_BYTE_END_TRANSFER: {
-			ESP_LOGI(TAG, "End I2C transfer.");
 			ESP_ERROR_CHECK(i2c_master_stop(handle_i2c));
-				ESP_LOGI(TAG, "Master stop OK.");
 			ESP_ERROR_CHECK(i2c_master_cmd_begin(I2C_MASTER_NUM, handle_i2c, I2C_TIMEOUT_MS / portTICK_RATE_MS));
-				ESP_LOGI(TAG, "Master cmd begin OK.");
 			i2c_cmd_link_delete(handle_i2c);
 			break;
 		}
