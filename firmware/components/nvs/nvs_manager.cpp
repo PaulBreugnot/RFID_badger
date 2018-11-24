@@ -1,6 +1,7 @@
 #include "nvs_manager.h"
 #include "nvs_flash.h"
 #include "nvs.h"
+#include "esp_log.h"
 
 nvs_handle my_handle;
 
@@ -12,11 +13,16 @@ esp_err_t init_nvs() {
   esp_err_t err = nvs_flash_init();
   if (err != ESP_OK) {
     // flash problem
+    ESP_LOGI("NVS", "Error at nvs_flash_init : %i", err);
     return err;
   }
   else {
     // Open nvs
-    return nvs_open("key_storage", NVS_READWRITE, &my_handle);
+    err = nvs_open("key_storage", NVS_READWRITE, &my_handle);
+    if (err != ESP_OK) {
+      ESP_LOGI("NVS", "Error at nvs_open : %i", err);
+    }
+    return err;
   }
 }
 
@@ -28,6 +34,7 @@ esp_err_t write_tag(const char *rfid_tag, const char *value) {
   esp_err_t err = nvs_set_str(my_handle, rfid_tag, value);
   // Commit tag
   if (err != ESP_OK) {
+    ESP_LOGI("NVS", "Error at write_tag : %.3x", err);
     return err;
   }
   return nvs_commit(my_handle);
@@ -46,7 +53,6 @@ check_tag_result check_tag(const char *rfid_tag, char **output_value) {
   esp_err_t err = nvs_get_str(my_handle, rfid_tag, NULL, &value_length);
   // char* read_value = (char *) malloc(value_length);
   // free(output_value);
-  *output_value = (char *) malloc(value_length);
   if (err == ESP_ERR_NVS_NOT_FOUND) {
     return INVALID_TAG;
   }
@@ -58,6 +64,7 @@ check_tag_result check_tag(const char *rfid_tag, char **output_value) {
     //   output_value = read_value;
     // }
     if (output_value != NULL) {
+      *output_value = (char *) malloc(value_length);
       nvs_get_str(my_handle, rfid_tag, *output_value, &value_length);
       // free(output_value);
     }
@@ -74,6 +81,7 @@ esp_err_t delete_tag(const char *rfid_tag) {
    */
   esp_err_t err = nvs_erase_key(my_handle, rfid_tag);
   if (err != ESP_OK) {
+    ESP_LOGI("NVS", "Error at delete_tag : %i", err);
     return err;
   }
   return nvs_commit(my_handle);
@@ -94,5 +102,9 @@ esp_err_t erase_nvs_partition() {
   /*
    * Remove all tags.
    */
-  return nvs_flash_erase();
+  esp_err_t err = nvs_flash_erase();
+  if (err != ESP_OK) {
+    ESP_LOGI("NVS", "Error at erase_nvs_partition : %i", err);
+  }
+  return err;
 }

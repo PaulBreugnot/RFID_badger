@@ -6,6 +6,7 @@
 
 #include "sdkconfig.h"
 #include "display.h"
+#include "esp_log.h"
 
 // SDA - GPIO21
 #define PIN_SDA 21
@@ -39,30 +40,29 @@ u8g2_t init_display() {
 	ESP_LOGI(TAG, "u8g2_ClearBuffer");
 	u8g2_ClearBuffer(&u8g2);
 
-	init_header(u8g2);
+	init_header(&u8g2);
 
-
-	ESP_LOGI(TAG, "All done!");
 	return u8g2;
 }
 
-void init_header(u8g2_t u8g2){
-	u8g2_SetFont(&u8g2, u8g2_font_crox2cb_tf);
-	u8g2_DrawStr(&u8g2, 2,15,"Min'Bot Inc.");
-	u8g2_DrawHLine(&u8g2, 0, 16, 128);
-	u8g2_SendBuffer(&u8g2);
+void init_header(u8g2_t* u8g2){
+	u8g2_SetFont(u8g2, u8g2_font_crox2cb_tf);
+	u8g2_DrawStr(u8g2, 2,15,"Min'Bot Inc.");
+	u8g2_DrawHLine(u8g2, 0, 16, 128);
+	u8g2_SendBuffer(u8g2);
 }
 
-void task_show_present_badge(void* u8g2_ptr) {
+void task_show_present_badge(void* animationParameter_ptr) {
 
-	u8g2_t* u8g2 = (u8g2_t*) u8g2_ptr;
+	struct AnimationParameter* animationParameter = (struct AnimationParameter*) animationParameter_ptr;
+	u8g2_t* u8g2 = animationParameter->u8g2;
 
   u8g2_SetFont(u8g2, u8g2_font_mercutio_basic_nbp_t_all);
   u8g2_DrawUTF8(u8g2, 13,30,"Présenter un badge");
 	int arrow_positions[] = {0, 2, 4, 6, 4, 2};
 	int i = 0;
 	// u8g2_ClearBuffer(u8g2);
-	for (;;) {
+	while (*animationParameter->run) {
 	// u8g2_ClearBuffer(u8g2);
 	u8g2_SetDrawColor(u8g2, 0);
 	u8g2_DrawBox(u8g2, 55, 32, 18, 63);
@@ -75,5 +75,19 @@ void task_show_present_badge(void* u8g2_ptr) {
 	if (i > 5) {
 		i = 0;
 	}
-};
+}
+clear_body(u8g2);
+vTaskDelete(NULL);
+}
+
+void show_correct_rfid(u8g2_t* u8g2) {
+	u8g2_DrawXBMP(u8g2, 39, 17, tick_width, tick_height, tick_bits);
+	u8g2_SendBuffer(u8g2);
+}
+
+void clear_body(u8g2_t* u8g2) {
+	u8g2_SetDrawColor(u8g2, 0);
+	u8g2_DrawBox(u8g2, 0, 17, 128, 47);
+	u8g2_SetDrawColor(u8g2, 1);
+	u8g2_SendBuffer(u8g2);
 }

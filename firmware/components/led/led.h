@@ -1,5 +1,5 @@
 #define GREEN_LED    16
-#define YELLOW_LED    5
+#define YELLOW_LED    26
 #define RED_LED    17
 
 #define ON 0

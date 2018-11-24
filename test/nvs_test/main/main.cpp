@@ -4,7 +4,7 @@
 #include "nvs_manager.h"
 #include "esp_log.h"
 
-const char test_tag [] = {0x12, 0x34, 0x56, 0x78};
+const char test_tag [] = {0x12, 0x34, 0x56, 0x78, 0x00};
 const char label [] = "test_tag";
 
 extern "C" {
