@@ -40,14 +40,16 @@ u8g2_t init_display() {
 	ESP_LOGI(TAG, "u8g2_ClearBuffer");
 	u8g2_ClearBuffer(&u8g2);
 
-	init_header(&u8g2);
+	set_header(&u8g2, "Min'Bot Inc.");
 
 	return u8g2;
 }
 
-void init_header(u8g2_t* u8g2){
-	u8g2_SetFont(u8g2, u8g2_font_crox2cb_tf);
-	u8g2_DrawStr(u8g2, 2,15,"Min'Bot Inc.");
+void set_header(u8g2_t* u8g2, char* header){
+	clear_header(u8g2);
+	// u8g2_SetFont(u8g2, u8g2_font_crox2cb_tf);
+	u8g2_SetFont(u8g2, u8g2_font_pxplusibmvga9_t_all);
+	u8g2_DrawUTF8(u8g2, 2, 15, header);
 	u8g2_DrawHLine(u8g2, 0, 16, 128);
 	u8g2_SendBuffer(u8g2);
 }
@@ -82,6 +84,63 @@ vTaskDelete(NULL);
 
 void show_correct_rfid(u8g2_t* u8g2) {
 	u8g2_DrawXBMP(u8g2, 39, 17, tick_width, tick_height, tick_bits);
+	set_header(u8g2, "Bienvenue!"); // SendBuffer included in set_header
+}
+
+void show_wrong_rfid(u8g2_t* u8g2) {
+	clear_body(u8g2);
+  u8g2_DrawXBMP(u8g2, 39, 18, cross_width, cross_height, cross_bits);
+	set_header(u8g2, "Accès refusé"); // SendBuffer included in set_header
+}
+
+void show_welcome(u8g2_t* u8g2, char* label) {
+	clear_body(u8g2);
+	u8g2_SetFont(u8g2, u8g2_font_ncenR08_tf);
+	u8g2_DrawStr(u8g2, 10, 35, "Utilisateur :");
+	u8g2_DrawStr(u8g2, 10, 49, label);
+	u8g2_DrawStr(u8g2, 10, 64, "Status : ADMIN");
+
+	u8g2_SendBuffer(u8g2);
+}
+
+void show_warning(u8g2_t* u8g2) {
+	clear_header(u8g2);
+	u8g2_SetFont(u8g2, u8g2_font_crox2cb_tf);
+	u8g2_DrawXBMP(u8g2, 0, 0, warning_width, warning_height, warning_bits);
+	u8g2_DrawXBMP(u8g2, 113, 0, warning_width, warning_height, warning_bits);
+  u8g2_DrawStr(u8g2, 18, 15, "Attention");
+
+	u8g2_SendBuffer(u8g2);
+}
+
+
+void show_door_unlocked(u8g2_t* u8g2) {
+	clear_body(u8g2);
+
+	u8g2_SetFont(u8g2, u8g2_font_mercutio_basic_nbp_t_all);
+  u8g2_DrawUTF8(u8g2, 25,40,"Porte ouverte !");
+	u8g2_DrawXBMP(u8g2, 0, 22, unlock_width, unlock_height, unlock_bits);
+	u8g2_DrawXBMP(u8g2, 107, 22, unlock_width, unlock_height, unlock_bits);
+	u8g2_DrawUTF8(u8g2, 20,58,"Pensez  à  badger.");
+
+	u8g2_SendBuffer(u8g2);
+}
+
+void show_door_lock(u8g2_t* u8g2) {
+	clear_body(u8g2);
+
+	set_header(u8g2, "Au revoir !");
+	u8g2_SetFont(u8g2, u8g2_font_mercutio_basic_nbp_t_all);
+  u8g2_DrawUTF8(u8g2, 25,30,"Fermeture . . .");
+	u8g2_DrawXBMP(u8g2, 49, 35, lock_width, lock_height, lock_bits);
+
+	u8g2_SendBuffer(u8g2);
+}
+
+void clear_header(u8g2_t* u8g2) {
+	u8g2_SetDrawColor(u8g2, 0);
+	u8g2_DrawBox(u8g2, 0, 0, 128, 16);
+	u8g2_SetDrawColor(u8g2, 1);
 	u8g2_SendBuffer(u8g2);
 }
 
