@@ -210,9 +210,8 @@ void app_main()
 
           vTaskDelay(2500 / portTICK_PERIOD_MS);
           vTaskDelete(xHandleWrongLed);
-          redLed.off();
         }
-
+        redLed.off();
         vTaskResume(xHandleWaitingLed);
 
         // Show the "present badge animation"
