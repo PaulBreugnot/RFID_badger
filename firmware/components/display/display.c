@@ -74,7 +74,7 @@ void show_wrong_rfid(u8g2_t* u8g2) {
 	ESP_LOGI("DISPLAY", "Show wrong rfid");
 	u8g2_FirstPage(u8g2);
 	do {
-	// clear_body(u8g2);
+		// clear_body(u8g2);
 		set_header(u8g2, "Accès refusé");
   	u8g2_DrawXBMP(u8g2, 39, 18, cross_width, cross_height, cross_bits);
 	} while (u8g2_NextPage(u8g2));
@@ -83,13 +83,12 @@ void show_wrong_rfid(u8g2_t* u8g2) {
 void show_welcome(u8g2_t* u8g2, char* label) {
 	u8g2_FirstPage(u8g2);
 	do {
-	// clear_body(u8g2);
-	set_header(u8g2, "Bienvenue!");
-	u8g2_SetFont(u8g2, u8g2_font_ncenR08_tf);
-	u8g2_DrawStr(u8g2, 10, 35, "Utilisateur :");
-	u8g2_DrawStr(u8g2, 10, 49, label);
-	u8g2_DrawStr(u8g2, 10, 64, "Status : ADMIN");
-
+		// clear_body(u8g2);
+		set_header(u8g2, "Bienvenue!");
+		u8g2_SetFont(u8g2, u8g2_font_ncenR08_tf);
+		u8g2_DrawStr(u8g2, 10, 35, "Utilisateur :");
+		u8g2_DrawStr(u8g2, 10, 49, label);
+		u8g2_DrawStr(u8g2, 10, 64, "Status : ADMIN");
 	} while (u8g2_NextPage(u8g2));
 }
 
@@ -99,8 +98,6 @@ void show_warning(u8g2_t* u8g2) {
 	u8g2_DrawXBMP(u8g2, 0, 0, warning_width, warning_height, warning_bits);
 	u8g2_DrawXBMP(u8g2, 113, 0, warning_width, warning_height, warning_bits);
   u8g2_DrawStr(u8g2, 18, 15, "Attention");
-
-	// u8g2_SendBuffer(u8g2);
 }
 
 
@@ -108,23 +105,22 @@ void show_door_unlocked(u8g2_t* u8g2) {
 	// clear_body(u8g2);
 	u8g2_FirstPage(u8g2);
 	do {
-	show_warning(u8g2);
-	u8g2_SetFont(u8g2, u8g2_font_mercutio_basic_nbp_t_all);
-  u8g2_DrawUTF8(u8g2, 25,40,"Porte ouverte !");
-	u8g2_DrawXBMP(u8g2, 0, 22, unlock_width, unlock_height, unlock_bits);
-	u8g2_DrawXBMP(u8g2, 107, 22, unlock_width, unlock_height, unlock_bits);
-	u8g2_DrawUTF8(u8g2, 20,58,"Pensez  à  badger.");
-}while (u8g2_NextPage(u8g2));
-	//u8g2_SendBuffer(u8g2);
+		show_warning(u8g2);
+		u8g2_SetFont(u8g2, u8g2_font_mercutio_basic_nbp_t_all);
+	  u8g2_DrawUTF8(u8g2, 25,40,"Porte ouverte !");
+		u8g2_DrawXBMP(u8g2, 0, 22, unlock_width, unlock_height, unlock_bits);
+		u8g2_DrawXBMP(u8g2, 107, 22, unlock_width, unlock_height, unlock_bits);
+		u8g2_DrawUTF8(u8g2, 20,58,"Pensez  à  badger.");
+	} while (u8g2_NextPage(u8g2));
 }
 
 void show_door_lock(u8g2_t* u8g2) {
 	// clear_body(u8g2);
 	u8g2_FirstPage(u8g2);
 	do {
-	set_header(u8g2, "Au revoir !");
-	u8g2_SetFont(u8g2, u8g2_font_mercutio_basic_nbp_t_all);
-  u8g2_DrawUTF8(u8g2, 25,30,"Fermeture . . .");
-	u8g2_DrawXBMP(u8g2, 49, 35, lock_width, lock_height, lock_bits);
-}while (u8g2_NextPage(u8g2));
+		set_header(u8g2, "Au revoir !");
+		u8g2_SetFont(u8g2, u8g2_font_mercutio_basic_nbp_t_all);
+	  u8g2_DrawUTF8(u8g2, 25,30,"Fermeture . . .");
+		u8g2_DrawXBMP(u8g2, 49, 35, lock_width, lock_height, lock_bits);
+	} while (u8g2_NextPage(u8g2));
 }
