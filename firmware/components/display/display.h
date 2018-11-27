@@ -108,10 +108,7 @@ struct AnimationParameter {
 
 u8g2_t init_display();
 void set_header(u8g2_t* u8g2, char* header);
-void task_show_present_badge(void* animationParameter_ptr);
-void show_present_badge(u8g2_t* u8g2);
-void clear_header(u8g2_t* u8g2);
-void clear_body(u8g2_t* u8g2);
+void show_present_badge(u8g2_t* u8g2, int offset);
 void show_correct_rfid(u8g2_t* u8g2);
 void show_wrong_rfid(u8g2_t* u8g2);
 void show_welcome(u8g2_t* u8g2, char* label);

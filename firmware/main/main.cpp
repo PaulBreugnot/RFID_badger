@@ -5,17 +5,19 @@
 #include "nvs_manager.h"
 #include "led.h"
 #include "FreeRTOS.h"
-#include "freertos/task.h"
 #include "esp_log.h"
 #include "MFRC522.h"
+#include "driver/rtc_io.h"
 
 #define SDK_pin 33
 #define RST_pin 32
 
+#define WAKE_UP_PIN 12
+
 #define ANIM_STACKSIZE 1536
 #define LED_STACKSIZE 512
 
-volatile bool run_animation = true;
+// volatile bool run_animation = true;
 
 extern "C" {
    void app_main();
@@ -63,49 +65,35 @@ void app_main()
   Led redLed = Led(RED_LED);
   init_leds();
 
-  // The yellow led blinks continuously
-  TaskHandle_t xHandleWaitingLed;
-  static BlinkParameter blinkParameter = BlinkParameter(yellowLed, 1000);
-  StaticTask_t xTaskLedBuffer;
-  StackType_t xStackLed[ LED_STACKSIZE ];
-
-  xHandleWaitingLed = xTaskCreateStatic(
-    taskBlinkLed,
-    "BlinkYellowLed",
-    LED_STACKSIZE,
-    &blinkParameter,
-    tskIDLE_PRIORITY + 1,
-    xStackLed,
-    &xTaskLedBuffer
-  );
-
-  // Display initialization
+  // Nvs initialization
   _init_nvs();
 
   // Display initialization
-  TaskHandle_t xHandleScreen = NULL;
-
   u8g2_t u8g2 = init_display();
-
-  // Set the "present badge" animation
-  static AnimationParameter animationParameter;
-  animationParameter.u8g2 = &u8g2;
-  animationParameter.run = &run_animation;
-  xTaskCreate(task_show_present_badge, "PresentBadge", ANIM_STACKSIZE, &animationParameter, tskIDLE_PRIORITY, &xHandleScreen );
+  int animOffset = 0;
+  show_present_badge(&u8g2, animOffset);
 
   // RFID reader initialization
   MFRC522 mfrc522_module = MFRC522();
   ESP_LOGI("MFRC522", "init module...");
   mfrc522_module.PCD_Init(SDK_pin, RST_pin);
 
-  // Uncomment to test memory usage
-  // vTaskDelay(20000 / portTICK_RATE_MS);
-  // ESP_LOGI("MEM", "screen %i", uxTaskGetStackHighWaterMark(xHandleScreen));
-  // ESP_LOGI("MEM", "led %i", uxTaskGetStackHighWaterMark(xHandleWaitingLed));
+  // Init wake up GPIO
+  rtc_gpio_init((gpio_num_t) WAKE_UP_PIN);
+  rtc_gpio_set_direction((gpio_num_t) WAKE_UP_PIN, RTC_GPIO_MODE_INPUT_ONLY);
+  rtc_gpio_pulldown_en((gpio_num_t) WAKE_UP_PIN);
+
+  esp_sleep_enable_ext0_wakeup((gpio_num_t) WAKE_UP_PIN, 1);
 
   while(1){
     // Main loop
     vTaskDelay(500 / portTICK_PERIOD_MS);
+    yellowLed.toggle();
+    show_present_badge(&u8g2, animOffset);
+    animOffset++;
+    if (animOffset > 3) {
+      animOffset = 0;
+    }
     if (mfrc522_module.PICC_IsNewCardPresent()){
       // Handle rfid
       if(mfrc522_module.PICC_ReadCardSerial()){
@@ -120,11 +108,8 @@ void app_main()
         char* label;
         if (check_tag(rfid, &label)){
           ESP_LOGI("MAIN", "Good rfid! %s", label);
-          run_animation = false; // Softly kill the animation
-          vTaskDelay(500 / portTICK_RATE_MS); // A delay to ensure animation is cleared
 
-          // Suspend yellow led animation
-          vTaskSuspend(xHandleWaitingLed);
+          redLed.off();
           yellowLed.off();
 
           greenLed.on();
@@ -135,28 +120,13 @@ void app_main()
           free(label);
           vTaskDelay(1000 / portTICK_RATE_MS);
 
-          // Blink red led
-          TaskHandle_t xHandleWarningLed;
-          static BlinkParameter blinkParameter = BlinkParameter(redLed, 200);
-          StaticTask_t xTaskWarningLedBuffer;
-          StackType_t xStackWarningLed[ LED_STACKSIZE ];
-
-          xHandleWarningLed = xTaskCreateStatic(
-            taskBlinkLed,
-            "BlinkYellowLed",
-            LED_STACKSIZE,
-            &blinkParameter,
-            tskIDLE_PRIORITY + 1,
-            xStackWarningLed,
-            &xTaskWarningLedBuffer
-          );
-
           show_door_unlocked(&u8g2);
 
           bool locked = false;
           while (!locked) {
             // Wait to close the door
             vTaskDelay(500 / portTICK_PERIOD_MS);
+            redLed.toggle();
             if (mfrc522_module.PICC_IsNewCardPresent()){
               // Handle rfid
               if(mfrc522_module.PICC_ReadCardSerial()){
@@ -182,47 +152,19 @@ void app_main()
               }
             }
           }
-          vTaskDelete(xHandleWarningLed);
           greenLed.off();
         }
         else {
           ESP_LOGI("MAIN", "Bad rfid!");
-          run_animation = false; // Softly kill the animation
-          vTaskDelay(500 / portTICK_RATE_MS); // A delay to ensure animation is cleared
-
-          // Blink red led
-          TaskHandle_t xHandleWrongLed;
-          static BlinkParameter blinkParameter = BlinkParameter(redLed, 200);
-          StaticTask_t xTaskWrongLedBuffer;
-          StackType_t xStackWrongLed[ LED_STACKSIZE ];
-
-          xHandleWrongLed = xTaskCreateStatic(
-            taskBlinkLed,
-            "BlinkRedLed",
-            LED_STACKSIZE,
-            &blinkParameter,
-            tskIDLE_PRIORITY + 1,
-            xStackWrongLed,
-            &xTaskWrongLedBuffer
-          );
-
           show_wrong_rfid(&u8g2);
-
-          vTaskDelay(2500 / portTICK_PERIOD_MS);
-          vTaskDelete(xHandleWrongLed);
+          for (int i = 0; i < 5; i++){
+            redLed.toggle();
+            vTaskDelay(300 / portTICK_RATE_MS);
+          }
         }
         redLed.off();
-        vTaskResume(xHandleWaitingLed);
-
-        // Show the "present badge animation"
-        run_animation = true;
-        xTaskCreate(task_show_present_badge, "PresentBadge", ANIM_STACKSIZE, &animationParameter, tskIDLE_PRIORITY, &xHandleScreen );
       }
     }
   }
-
-  vTaskDelete(xHandleWaitingLed);
-  vTaskDelete(xHandleScreen);
-  yellowLed.off();
 
 }
