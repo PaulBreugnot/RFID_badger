@@ -165,6 +165,14 @@ void app_main()
         redLed.off();
       }
     }
+    if (!rtc_gpio_get_level((gpio_num_t) WAKE_UP_PIN)) {
+      u8g2_ClearDisplay(&u8g2);
+      u8g2_SetPowerSave(&u8g2, 1);
+
+      gpio_set_level((gpio_num_t) RST_pin, 0);
+
+      esp_deep_sleep_start();
+    }
   }
 
 }
