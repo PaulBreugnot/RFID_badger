@@ -9,10 +9,13 @@
 #include "MFRC522.h"
 #include "driver/rtc_io.h"
 
+#include "server.h"
+// #include "user.h"
+
 #define SDK_pin 33
 #define RST_pin 32
 
-#define WAKE_UP_PIN 12
+#define WAKE_UP_PIN 27
 
 #define ANIM_STACKSIZE 1536
 #define LED_STACKSIZE 512
@@ -29,7 +32,9 @@ void _init_nvs() {
 
   // Some test data
   const char test_tag [] = {0x1A, 0x44, 0xFD, 0x90, 0x00};
+  const char test_tag_2 [] = {0xC6, 0xE5, 0xC5, 0x1A, 0x00};
   const char label [] = "Paul Breugnot";
+  const char label2 [] = "Sakata Gintoki";
 
   // Format the nvs partition each time (test)
   esp_err_t err = erase_nvs_partition();
@@ -42,7 +47,7 @@ void _init_nvs() {
     err = write_tag(test_tag, label);
   }
   if (err == ESP_OK) {
-    ESP_LOGI("NVS", "Write test tag : %.2x %.2x %.2x %.2x\n With label : %s"
+    ESP_LOGI("NVS", "Written test tag : %.2x %.2x %.2x %.2x\n With label : %s"
                         ,test_tag[0]
                         ,test_tag[1]
                         ,test_tag[2]
@@ -52,6 +57,21 @@ void _init_nvs() {
   if (err != ESP_OK) {
     ESP_LOGI("NVS", "NVS error occured.");
   }
+  write_tag(test_tag_2, label2);
+
+  // User* users[getUsersCount()];
+  // ESP_LOGI("USERS", "Current user count : %i", getUsersCount());
+  // getUsers(users);
+
+  // for(int i = 0; i < getUsersCount(); i ++) {
+  //   ESP_LOGI("USERS", "User %i rfid : %.2x, %.2x, %.2x, %.2x", i,
+  //     users[i]->getRfid()[0],
+  //     users[i]->getRfid()[1],
+  //     users[i]->getRfid()[2],
+  //     users[i]->getRfid()[3]);
+  //   ESP_LOGI("USERS", "User %i name : %s", i, users[i]->getName());
+  // }
+  // free(users);
 }
 
 void app_main()
