@@ -1,0 +1,31 @@
+{
+    "name": "test",
+    "version": "0.0.1",
+    "description": "",
+    "main": "src/index.js",
+    "scripts": {
+        "build": "webpack --progress --colors --mode development",
+        "build:release": "webpack --progress --colors --mode production",
+        "start": "webpack-dev-server --content-base ./dist",
+        "commit": "git cz",
+        "semantic-release": "semantic-release"
+    },
+    "keywords": [
+        "Minbot",
+        "EMSE",
+        "RFID"
+    ],
+    "author": "Lag",
+    "license": "BSD-2-Clause",
+    "dependencies": {
+        "body-parser": "^1.18.3",
+        "cookie-parser": "^1.4.3",
+        "csurf": "^1.9.0",
+        "express": "^4.16.4",
+        "fs": "0.0.1-security",
+        "vtk.js": "^8.1.0"
+    },
+    "devDependencies": {
+        "kw-web-suite": "^8.0.0"
+    }
+}
