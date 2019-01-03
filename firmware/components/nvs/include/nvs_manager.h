@@ -21,4 +21,4 @@ size_t get_available_users(char* available_users);
 void log_available_users();
 
 int getUsersCount();
-void getUsers(User** users_ptr_array);
+void getUsers(User* users_array);

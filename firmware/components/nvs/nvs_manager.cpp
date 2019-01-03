@@ -176,7 +176,7 @@ int getUsersCount() {
   return available_users_len / 4;
 }
 
-void getUsers(User** users) {
+void getUsers(User* users) {
   // users is suposed to have been allocated a sufficient amount of memory.
   // You can use getUsersCount() to do so.
 
@@ -204,9 +204,9 @@ void getUsers(User** users) {
     name = (char*) malloc(name_length * sizeof(char));
     nvs_get_str(my_nvs_handle, rfid, name, &name_length);
 
-    users[j] = (User*) malloc(sizeof(User));
-    users[j]->setName(name);
-    users[j]->setRfid(rfid);
+    // users[j] = (User*) malloc(sizeof(User));
+    users[j].setName(name);
+    users[j].setRfid(rfid);
   }
 
   free(available_users);

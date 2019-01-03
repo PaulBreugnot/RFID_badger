@@ -60,19 +60,18 @@ void _init_nvs() {
   write_tag(test_tag_2, label2);
 
   size_t user_count = getUsersCount();
-  User** users;
-  users = (User**) malloc(user_count * sizeof(User*));
-  ESP_LOGI("USERS", "Current user count : %i", getUsersCount());
+  User* users = new User[user_count];
+  ESP_LOGI("USERS", "Current user count : %i", user_count);
   getUsers(users);
   for (int j = 0; j < user_count; j++) {
-    ESP_LOGI("USERS", "user[%i] name : %s", j, users[j]->getName());
+    ESP_LOGI("USERS", "user[%i] name : %s", j, users[j].getName());
     ESP_LOGI("USERS", "user[%i] rfid : %.2x %.2x %.2x %.2x", j,
-      users[j]->getRfid()[0],
-      users[j]->getRfid()[1],
-      users[j]->getRfid()[2],
-      users[j]->getRfid()[3]);
+      users[j].getRfid()[0],
+      users[j].getRfid()[1],
+      users[j].getRfid()[2],
+      users[j].getRfid()[3]);
   }
-  free(users);
+  delete[] users;
 }
 
 void app_main()

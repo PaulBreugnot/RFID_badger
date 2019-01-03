@@ -27,5 +27,6 @@ char* User::getName() {
 }
 
 User::~User() {
-  ESP_LOGI("USER", "Destroy user");
+  free(this->name);
+  free(this->rfid);
 }
