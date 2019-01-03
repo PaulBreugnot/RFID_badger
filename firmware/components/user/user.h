@@ -2,7 +2,7 @@
 class User {
 private:
   char* rfid;
-  char* name;
+    char* name;
 
 public:
   User();
@@ -13,4 +13,5 @@ public:
 
   void setName(char* name);
   char* getName();
+  ~User();
 };

@@ -185,41 +185,29 @@ void getUsers(User** users) {
 
   size_t user_count = available_users_len / 4;
   for (int j = 0; j < user_count; j++) {
-    char rfid[5];
+    char* rfid;
+    rfid = (char*) malloc(5 * sizeof(char));
     for (int i = 0; i < 4; i++) {
       rfid[i] = available_users[4 * j + i];
     }
     rfid[4] = 0x00;
-    ESP_LOGI("NVS", "User rfid : %.2x %.2x %.2x %.2x"
+    ESP_LOGD("NVS", "User rfid : %.2x %.2x %.2x %.2x"
                         ,rfid[0]
                         ,rfid[1]
                         ,rfid[2]
                         ,rfid[3]);
-    // users[j].setRfid(rfid);
     size_t name_length;
     nvs_get_str(my_nvs_handle, rfid, NULL, &name_length); // set name_length
-    ESP_LOGI("NVS", "User name length : %i", name_length);
+    ESP_LOGD("NVS", "User name length : %i", name_length);
 
-    char name[name_length];
+    char* name;
+    name = (char*) malloc(name_length * sizeof(char));
     nvs_get_str(my_nvs_handle, rfid, name, &name_length);
-    // users[j].setName(name);
 
-    User* testUser = new User(rfid, name);
-    ESP_LOGI("TEST-USERS", "User rfid : %.2x, %.2x, %.2x, %.2x",
-      testUser->getRfid()[0],
-      testUser->getRfid()[1],
-      testUser->getRfid()[2],
-      testUser->getRfid()[3]);
-    ESP_LOGI("TEST-USERS", "User name : %s", testUser->getName());
-    users[j] = testUser;
-    ESP_LOGI("CHECK-USERS", "User rfid : %.2x, %.2x, %.2x, %.2x",
-      users[0]->getRfid()[0],
-      users[0]->getRfid()[1],
-      users[0]->getRfid()[2],
-      users[0]->getRfid()[3]);
-    ESP_LOGI("CHECK-USERS", "User name : %s", users[0]->getName());
-    delete testUser;
+    users[j] = (User*) malloc(sizeof(User));
+    users[j]->setName(name);
+    users[j]->setRfid(rfid);
   }
-  
+
   free(available_users);
 }

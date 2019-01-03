@@ -1,4 +1,5 @@
 #include "user.h"
+#include "esp_log.h"
 
 User::User() {
   this->rfid = nullptr;
@@ -23,4 +24,8 @@ void User::setName(char* name) {
 
 char* User::getName() {
   return name;
+}
+
+User::~User() {
+  ESP_LOGI("USER", "Destroy user");
 }
